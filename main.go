@@ -1,15 +1,21 @@
 package main
 
 import (
-    "github.com/gin-gonic/gin"
-    "spe/routes"
-    "github.com/gin-contrib/cors"
+	"spe/routes"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    r := gin.Default()
-    r.Use(cors.Default()) // Allow frontend requests.
+	r := gin.Default()
 
-    routes.SetupRoutes(r)
-    r.Run(":8080")
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+	}))
+
+	routes.SetupRoutes(r)
+
+	r.Run(":8080")
 }
