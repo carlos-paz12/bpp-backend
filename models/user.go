@@ -4,9 +4,11 @@ import "golang.org/x/crypto/bcrypt"
 
 type User struct {
 	ID       int    `json:"id"`
+	Name     string `json:"name"`
 	Username string `json:"username"`
 	Password string `json:"-"`
-	Role     string `json:"role"`
+	Email    string `json:"email"`
+	
 }
 
 func (u *User) SetPassword(password string) error {
