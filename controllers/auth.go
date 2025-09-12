@@ -16,7 +16,7 @@ var jwtKey = []byte("7YcpY9oM56xRZ444ynlFS/khnm5LPCa/ktUgpPUzom0=")
 var bolsistas = map[string]*models.User{}
 
 func init() {
-	user1 := &models.User{ID: 1, Username: "carlos", Role: "admin"}
+	user1 := &models.User{ID: 1, Username: "carlos"}
 	user1.SetPassword("1234")
 	bolsistas[user1.Username] = user1
 }
@@ -49,6 +49,7 @@ func Login(c *gin.Context) {
 		Username string `json:"username"`
 		Password string `json:"password"`
 	}
+
 	if err := c.BindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
 		return
@@ -61,8 +62,6 @@ func Login(c *gin.Context) {
 	}
 
 	claims := &auth.Claims{
-		Username: user.Username,
-		Role:     user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 8)),
 		},

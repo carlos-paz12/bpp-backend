@@ -47,10 +47,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Guarda username e role no contexto
-		c.Set("username", claims.Username)
-		c.Set("role", claims.Role)
-
 		c.Next()
 	}
 }

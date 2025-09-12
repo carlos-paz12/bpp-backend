@@ -6,25 +6,24 @@ type User struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
-	Password string `json:"-"`
+	Password string `json:"password"`
 	Email    string `json:"email"`
-	
 }
 
 func (u *User) SetPassword(password string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
-    if err != nil {
+	if err != nil {
 		return err
 	}
 
-    u.Password = string(hash)
+	u.Password = string(hash)
 
-    return nil
+	return nil
 }
 
 func (u *User) CheckPassword(password string) bool {
-    err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 
-    return err == nil
+	return err == nil
 }
