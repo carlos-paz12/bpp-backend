@@ -41,6 +41,7 @@ bpp-backend/
 3. Install the dependencies:
 
     ```sh
+    go mod download
     go mod tidy
     ```
 
