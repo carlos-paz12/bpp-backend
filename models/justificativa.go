@@ -10,12 +10,13 @@ const (
 	Rejeitado StatusJustificativa = "rejeitado"
 )
 
-type HorasJustificadas struct {
+type Justificativa struct {
 	Id         int                 `json:"id"`
 	BolsistaID int                 `json:"bolsista_id"`
 	Data       time.Time           `json:"data"`
-	Motivo     string              `json:"motivo"`
 	Horas      int                 `json:"horas"`
 	Minutos    int                 `json:"minutos"`
+	Motivo     string              `json:"motivo"`
 	Status     StatusJustificativa `json:"status"`
+	Comentario string              `json:"comentario"`
 }
