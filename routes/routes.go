@@ -1,8 +1,8 @@
 package routes
 
 import (
+	"spe/controllers"
 	"spe/controllers/admin"
-	"spe/controllers/auth"
 	"spe/controllers/bolsista"
 	"spe/controllers/justificativa"
 	"spe/controllers/ponto"
@@ -29,7 +29,7 @@ func SetupRoutes(r *gin.Engine) {
 		// @URL		/auth/login
 		// @Body	{ "username": "", "senha": "" }
 		// @Return	{ "token": "", "error": "", "status": "" }
-		api.POST("/auth/login", auth.Login)
+		api.POST("/auth/login", controllers.AuthController{}.Login)
 
 		// == Rotas protegidas (requerem autenticação).
 		// Isto é, para qualquer uma das rotas a seguir, deve ter obrigatoriamente no corpo da requisição o token JWT.
