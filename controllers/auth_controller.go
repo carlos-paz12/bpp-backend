@@ -24,7 +24,7 @@ func (AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := services.Login(body.Username, body.Password)
+	token, err := services.AuthService{}.Login(body.Username, body.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error":  "Usuário ou senha inválidos.",

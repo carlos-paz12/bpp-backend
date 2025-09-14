@@ -41,7 +41,9 @@ func init() {
 	bolsistas[leandro.Username] = leandro
 }
 
-func Login(username, password string) (string, error) {
+type AuthService struct{}
+
+func (AuthService) Login(username, password string) (string, error) {
 	var role string
 	var userID int
 

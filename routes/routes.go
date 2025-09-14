@@ -2,10 +2,6 @@ package routes
 
 import (
 	"spe/controllers"
-	"spe/controllers/admin"
-	"spe/controllers/bolsista"
-	"spe/controllers/justificativa"
-	"spe/controllers/ponto"
 	"spe/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -44,32 +40,32 @@ func SetupRoutes(r *gin.Engine) {
 				// @Method    GET
 				// @URL       /me/pontos
 				// @Return    { "pontos": [], "error": "", "status": "" }
-				bolsistas.GET("/pontos", ponto.RetrieveAllWhereBolsistaId)
+				bolsistas.GET("/pontos", controllers.PontoController{}.RetrieveAllWhereBolsistaId)
 
 				// @Brief     Retorna último registro de ponto do bolsista autenticado.
 				// @Method    GET
 				// @URL       /me/pontos/ultimo
 				// @Return    { "ultimo_ponto": {}, "error": "", "status": "" }
-				bolsistas.GET("/pontos/ultimo", ponto.RetrieveLastWhereBolsistaId)
+				bolsistas.GET("/pontos/ultimo", controllers.PontoController{}.RetrieveLastWhereBolsistaId)
 
 				// @Brief     Registra novo ponto (entrada | saída).
 				// @Method    POST
 				// @URL       /me/pontos
 				// @Return    { "error": "", "status": "" }
-				bolsistas.POST("/pontos", ponto.Create)
+				bolsistas.POST("/pontos", controllers.PontoController{}.Create)
 
 				// @Brief     Retorna todas as justificativas do bolsista autenticado.
 				// @Method    GET
 				// @URL       /me/justificativas
 				// @Return    { "justificativas": [], "error": "", "status": "" }
-				bolsistas.GET("/justificativas", justificativa.RetrieveAllWhereBolsistaId)
+				bolsistas.GET("/justificativas", controllers.JustificativaController{}.RetrieveAllWhereBolsistaId)
 
 				// @Brief     Registra nova justificativa.
 				// @Method    POST
 				// @URL       /me/justificativas
 				// @Body      { "data": "DD-MM-AAAA", "horas": "", "minutos": "", "motivo": "..." }
 				// @Return    { "error": "", "status": "" }
-				bolsistas.POST("/justificativas", justificativa.Create)
+				bolsistas.POST("/justificativas", controllers.JustificativaController{}.Create)
 			}
 
 			// === Rotas do admin (/me).
@@ -81,63 +77,63 @@ func SetupRoutes(r *gin.Engine) {
 				// @URL       /admins
 				// @Body      { "name": "", "username": "", "password": "", "email": "" }
 				// @Return    { "error": "", "status": "" }
-				admins.POST("/", admin.Create)
+				admins.POST("/", controllers.AdminController{}.Create)
 
 				// @Brief     Lista todos os usuários do tipo admin.
 				// @Method    GET
 				// @URL       /admins
 				// @Return    { "admins": [], "error": "", "status": "" }
-				admins.GET("/", admin.RetrieveAll)
+				admins.GET("/", controllers.AdminController{}.RetrieveAll)
 
 				// @Brief     Deleta um admin pelo ID.
 				// @Method    DELETE
 				// @URL       /admins/:id
 				// @Return    { "error": "", "status": "" }
-				admins.DELETE("/:id", admin.Delete)
+				admins.DELETE("/:id", controllers.AdminController{}.Delete)
 
 				// @Brief     Cria um novo usuário do tipo bolsista.
 				// @Method    POST
 				// @URL       /admins/bolsistas
 				// @Body      { "name": "", "username": "", "password": "", "email": "", "matricula": "", "horas_mensais": "" }
 				// @Return    { "error": "", "status": "" }
-				admins.POST("/bolsistas", bolsista.Create)
+				admins.POST("/bolsistas", controllers.BolsistaController{}.Create)
 
 				// @Brief     Lista todos os usuários do tipo bolsista.
 				// @Method    GET
 				// @URL       /admins/bolsistas
 				// @Return    { "bolsistas": [], "error": "", "status": "" }
-				admins.GET("/bolsistas", bolsista.RetrieveAll)
+				admins.GET("/bolsistas", controllers.BolsistaController{}.RetrieveAll)
 
 				// @Brief     Deleta um bolsista pelo ID.
 				// @Method    DELETE
 				// @URL       /admins/bolsistas/:id
 				// @Return    { "error": "", "status": "" }
-				admins.DELETE("/bolsistas/:id", bolsista.Delete)
+				admins.DELETE("/bolsistas/:id", controllers.BolsistaController{}.Delete)
 
 				// @Brief     Lista todos os pontos de um bolsista específico.
 				// @Method    GET
 				// @URL       /admins/bolsistas/:id/pontos
 				// @Return    { "pontos": [], "error": "", "status": "" }
-				admins.GET("/bolsistas/:id/pontos", ponto.RetrieveAllWhereBolsistaId)
+				admins.GET("/bolsistas/:id/pontos", controllers.PontoController{}.RetrieveAllWhereBolsistaId)
 
 				// @Brief     Lista todas as justificativas de um bolsista específico.
 				// @Method    GET
 				// @URL       /admins/bolsistas/:id/justificativas
 				// @Return    { "justificativas": [], "error": "", "status": "" }
-				admins.GET("/bolsistas/:id/justificativas", justificativa.RetrieveAllWhereBolsistaId)
+				admins.GET("/bolsistas/:id/justificativas", controllers.JustificativaController{}.RetrieveAllWhereBolsistaId)
 
 				// @Brief     Lista todas as justificativas.
 				// @Method    GET
 				// @URL       /admins/justificativas
 				// @Return    { "justificativas": [], "error": "", "status": "" }
-				admins.GET("/justificativas", justificativa.RetrieveAll)
+				admins.GET("/justificativas", controllers.JustificativaController{}.RetrieveAll)
 
 				// @Brief     Atualiza uma justificativa (aprovar ou rejeitar).
 				// @Method    PATCH
 				// @URL       /admins/justificativas/:id
 				// @Body      { "status": "aprovado" | "rejeitado", "comentario": "" }
 				// @Return    { "error": "", "status": "" }
-				admins.PATCH("/justificativas/:id", justificativa.Update)
+				admins.PATCH("/justificativas/:id", controllers.JustificativaController{}.Update)
 			}
 		}
 	}
