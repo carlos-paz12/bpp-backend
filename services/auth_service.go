@@ -58,7 +58,7 @@ func (AuthService) Login(username, password string) (string, error) {
 	}
 
 	claims := &auth.Claims{
-		UserId: userID,
+		UserID: userID,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(8 * time.Hour)),

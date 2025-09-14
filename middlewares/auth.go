@@ -78,8 +78,9 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		/*!<
 		 * Se o token for válido...
-		 * Injeta a role do usuário no contexto e continua.
+		 * Injeta o ID e a role do usuário no contexto e continua.
 		 */
+		c.Set("user_id", claims.UserID)
 		c.Set("role", claims.Role)
 		c.Next()
 	}

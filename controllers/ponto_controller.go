@@ -1,28 +1,44 @@
 package controllers
 
 import (
+	"spe/services"
+
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PontoController struct{}
 
-var registros = map[string][]string{}
+var pontoService = services.PontoService{}
 
 func (PontoController) Create(c *gin.Context) {
-	username := c.GetString("username")
-	horario := time.Now().Format("02/01/2006 15:04:05")
-	registros[username] = append(registros[username], horario)
-	c.JSON(http.StatusOK, gin.H{"message": "Ponto registrado!", "horario": horario})
+	bolsistaID := c.GetInt("user_id")
+	ponto := pontoService.Create(bolsistaID)
+
+	c.JSON(http.StatusOK, gin.H{
+		"novo_ponto": ponto,
+		"error":      "",
+		"status":     http.StatusOK,
+	})
 }
 
 func (PontoController) RetrieveAllWhereBolsistaId(c *gin.Context) {
-	username := c.GetString("username")
-	c.JSON(http.StatusOK, gin.H{"registros": registros[username]})
+	bolsistaID := c.GetInt("user_id")
+	pontos := pontoService.RetrieveAll(bolsistaID)
+	c.JSON(http.StatusOK, gin.H{
+		"pontos": pontos,
+		"error":  "",
+		"status": http.StatusOK,
+	})
 }
 
 func (PontoController) RetrieveLastWhereBolsistaId(c *gin.Context) {
-	// Todo
+	bolsistaID := c.GetInt("user_id")
+	ultimo := pontoService.RetrieveLast(bolsistaID)
+	c.JSON(http.StatusOK, gin.H{
+		"ultimo": ultimo,
+		"error":  "",
+		"status": http.StatusOK,
+	})
 }
