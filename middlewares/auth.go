@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"errors"
 	"spe/models/auth"
 
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -13,53 +13,74 @@ import (
 
 var jwtKey = []byte("7YcpY9oM56xRZ444ynlFS/khnm5LPCa/ktUgpPUzom0=")
 
-// AuthMiddleware valida o token JWT e injeta claims no contexto
+// AuthMiddleware valida o token JWT e injeta claims no contexto.
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		/*!<
+		 * Busca o header "Authorization".
+		 * Espera algo como: Authorization: Bearer <token>.
+		 * Se estiver vazio, retorna 401 Unauthorized para o cliente.
+		 */
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":  "Token não fornecido.",
+				"status": http.StatusUnauthorized,
+			})
 			c.Abort()
 			return
 		}
 
+		/*!<
+		 * Divide o header em duas partes.
+		 * Espera algo como: ["Bearer", "<token>"].
+		 * Se não tiver esse formato, retorna 401 Unauthorized para o cliente.
+		 */
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":  "Token inválido.",
+				"status": http.StatusUnauthorized,
+			})
 			c.Abort()
 			return
 		}
 
-		tokenString := parts[1]
-		claims := &auth.Claims{}
+		tokenString := parts[1]  //!< Token JWT enviado na requisição.
+		claims := &auth.Claims{} //!< Claims personalizadas.
 
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			// Garante que está usando HMAC (HS256/HS512)
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("método de assinatura inesperado: %v", token.Header["alg"])
+		/*!<
+		 * Valida o token com as claims personalizadas.
+		 * Garante que o algoritmo de assinatura é HMAC (ex: HS256).
+		 * Usa jwtKey para validar a assinatura.
+		 * Decodifica o payload no struct `claims`.
+		 */
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+			_, ok := token.Method.(*jwt.SigningMethodHMAC)
+			if !ok {
+				return nil, errors.New("Método de assinatura inesperado.")
 			}
 			return jwtKey, nil
 		})
 
+		/*!<
+		 * Se o token for inválido...
+		 * Retorna 401 Unauthorized para o cliente.
+		 */
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":  "Token inválido.",
+				"status": http.StatusUnauthorized,
+			})
 			c.Abort()
 			return
 		}
 
-		c.Next()
-	}
-}
-
-// RequireRole garante que o usuário tenha uma role específica
-func RequireRole(requiredRole string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		role, exists := c.Get("role")
-		if !exists || role != requiredRole {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Acesso negado"})
-			c.Abort()
-			return
-		}
+		/*!<
+		 * Se o token for válido...
+		 * Injeta a role do usuário no contexto e continua.
+		 */
+		c.Set("role", claims.Role)
 		c.Next()
 	}
 }

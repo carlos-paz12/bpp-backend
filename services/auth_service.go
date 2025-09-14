@@ -1,9 +1,10 @@
 package services
 
 import (
-	"errors"
 	"spe/models"
 	"spe/models/auth"
+
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
