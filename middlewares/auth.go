@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"errors"
-	"spe/models/auth"
+	"spe/models"
 
 	"net/http"
 	"strings"
@@ -46,8 +46,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenString := parts[1]  //!< Token JWT enviado na requisição.
-		claims := &auth.Claims{} //!< Claims personalizadas.
+		tokenString := parts[1]             //!< Token JWT enviado na requisição.
+		claims := &models.JwtCustomClaims{} //!< Claims personalizadas.
 
 		/*!<
 		 * Valida o token com as claims personalizadas.

@@ -10,34 +10,55 @@ import (
 
 type PontoController struct{}
 
-var pontoService = services.PontoService{}
-
 func (PontoController) Create(c *gin.Context) {
-	bolsistaID := c.GetInt("user_id")
-	ponto := pontoService.Create(bolsistaID)
+	scholarshipID := c.GetInt64("user_id")
+	newPointRecord, err := services.PointRecordService{}.Create(scholarshipID)
+
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error":  "Erro ao registrar ponto.",
+			"status": http.StatusForbidden,
+		})
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"novo_ponto": ponto,
+		"novo_ponto": newPointRecord,
 		"error":      "",
 		"status":     http.StatusOK,
 	})
 }
 
-func (PontoController) RetrieveAllWhereBolsistaId(c *gin.Context) {
-	bolsistaID := c.GetInt("user_id")
-	pontos := pontoService.RetrieveAll(bolsistaID)
+func (PontoController) RetrieveAllWhereScholarshipID(c *gin.Context) {
+	scholarshipID := c.GetInt64("user_id")
+	pointRecords, err := services.PointRecordService{}.FindAllWhereScholarshipId(scholarshipID)
+
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error":  "Erro ao recuperar pontos.",
+			"status": http.StatusForbidden,
+		})
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"pontos": pontos,
+		"pontos": pointRecords,
 		"error":  "",
 		"status": http.StatusOK,
 	})
 }
 
-func (PontoController) RetrieveLastWhereBolsistaId(c *gin.Context) {
-	bolsistaID := c.GetInt("user_id")
-	ultimo := pontoService.RetrieveLast(bolsistaID)
+func (PontoController) RetrieveLastWhereScholarshipID(c *gin.Context) {
+	scholarshipID := c.GetInt64("user_id")
+	lastRecord, err := services.PointRecordService{}.FindLastWhereScholarshipId(scholarshipID)
+
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error":  "Erro ao recuperar pontos.",
+			"status": http.StatusForbidden,
+		})
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"ultimo": ultimo,
+		"ultimo": lastRecord,
 		"error":  "",
 		"status": http.StatusOK,
 	})

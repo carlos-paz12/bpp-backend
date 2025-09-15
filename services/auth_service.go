@@ -1,65 +1,39 @@
 package services
 
 import (
-	"spe/models"
-	"spe/models/auth"
-
 	"errors"
+	"spe/models"
+	"spe/repository"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var jwtKey = []byte("7YcpY9oM56xRZ444ynlFS/khnm5LPCa/ktUgpPUzom0=")
 
-var admins = map[string]*models.Admin{}
-var bolsistas = map[string]*models.Bolsista{}
-
-func init() {
-	leonardo := &models.Admin{
-		User: models.User{
-			Id:       1,
-			Name:     "Leonardo",
-			Username: "leonardo",
-			Email:    "leonardo@dimap.ufrn.br",
-		},
-	}
-	leonardo.SetPassword("12345")
-	admins[leonardo.Username] = leonardo
-
-	leandro := &models.Bolsista{
-		User: models.User{
-			Id:       2,
-			Name:     "Leandro",
-			Username: "leandro",
-			Email:    "leandro@dimap.ufrn.br",
-		},
-		Matricula:    "20240000000",
-		HorasMensais: 80,
-	}
-	leandro.SetPassword("qwerty@12345")
-	bolsistas[leandro.Username] = leandro
-}
-
 type AuthService struct{}
 
-func (AuthService) Login(username, password string) (string, error) {
-	var role string
-	var userID int
-
-	if admin, exists := admins[username]; exists && admin.CheckPassword(password) {
-		userID = admin.Id
-		role = "admin"
-	} else if bolsista, exists := bolsistas[username]; exists && bolsista.CheckPassword(password) {
-		userID = bolsista.Id
-		role = "bolsista"
-	} else {
-		return "", errors.New("usuário ou senha inválidos.")
+func (AuthService) Login(username, password string) (*models.LoginResponse, error) {
+	user, err := repository.UserRepository{}.FindByUsername(username)
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
+		return nil, errors.New("Usuário ou senha inválidos")
 	}
 
-	claims := &auth.Claims{
-		UserID: userID,
+	role := "user"
+	adminRepo := repository.AdminRepository{}
+	if _, err := adminRepo.FindByUserId(user.Id); err == nil {
+		role = "admin"
+	} else {
+		scholarRepo := repository.ScholarshipRepository{}
+		if _, err := scholarRepo.FindByUserId(user.Id); err == nil {
+			role = "bolsista"
+		}
+	}
+
+	claims := models.JwtCustomClaims{
 		Role:   role,
+		UserID: user.Id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(8 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -67,5 +41,14 @@ func (AuthService) Login(username, password string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return nil, errors.New("Erro ao gerar token.")
+	}
+
+	return &models.LoginResponse{
+		Token: tokenString,
+		Role:  role,
+		User:  user,
+	}, nil
 }
