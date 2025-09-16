@@ -6,11 +6,11 @@ func (JustificationRepository) Create() {
 	// Todo
 }
 
-func (JustificationRepository) RetrieveAll() {
+func (JustificationRepository) FindAll() {
 	// Todo
 }
 
-func (JustificationRepository) RetrieveAllWhereScholarshipId() {
+func (JustificationRepository) FindAllByScholarshipID() {
 	// Todo
 }
 

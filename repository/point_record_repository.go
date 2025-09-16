@@ -41,14 +41,14 @@ func (PointRecordRepository) Create(scholarshipID int64) models.PointRecord {
 	return newPointRecord
 }
 
-// RetrieveAllWhereScholarshipId retorna todos os registros de ponto de um bolsista.
-func (PointRecordRepository) RetrieveAllWhereScholarshipId(scholarshipID int64) []models.PointRecord {
+// FindAllWhereScholarshipID retorna todos os registros de ponto de um bolsista.
+func (PointRecordRepository) FindAllByScholarshipID(scholarshipID int64) []models.PointRecord {
 	return records[scholarshipID]
 }
 
-// RetrieveLastWhereScholarshipId retorna o último registro de ponto de um bolsista.
+// FindLastByScholarshipID retorna o último registro de ponto de um bolsista.
 // Retorna erro se não houver registros.
-func (PointRecordRepository) RetrieveLastWhereScholarshipId(scholarshipID int64) (*models.PointRecord, error) {
+func (PointRecordRepository) FindLastByScholarshipID(scholarshipID int64) (*models.PointRecord, error) {
 	pointRecords := records[scholarshipID]
 	if len(pointRecords) == 0 {
 		return nil, errors.New("Nenhum registro encontrado.")

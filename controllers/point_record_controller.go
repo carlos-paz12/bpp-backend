@@ -8,9 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PontoController struct{}
+type PointRecordController struct{}
 
-func (PontoController) Create(c *gin.Context) {
+func (PointRecordController) Create(c *gin.Context) {
 	scholarshipID := c.GetInt64("user_id")
 	newPointRecord, err := services.PointRecordService{}.Create(scholarshipID)
 
@@ -28,9 +28,9 @@ func (PontoController) Create(c *gin.Context) {
 	})
 }
 
-func (PontoController) RetrieveAllWhereScholarshipID(c *gin.Context) {
+func (PointRecordController) FindAllByScholarshipID(c *gin.Context) {
 	scholarshipID := c.GetInt64("user_id")
-	pointRecords, err := services.PointRecordService{}.FindAllWhereScholarshipId(scholarshipID)
+	pointRecords, err := services.PointRecordService{}.FindAllByScholarshipID(scholarshipID)
 
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{
@@ -46,9 +46,9 @@ func (PontoController) RetrieveAllWhereScholarshipID(c *gin.Context) {
 	})
 }
 
-func (PontoController) RetrieveLastWhereScholarshipID(c *gin.Context) {
+func (PointRecordController) FindLastByScholarshipID(c *gin.Context) {
 	scholarshipID := c.GetInt64("user_id")
-	lastRecord, err := services.PointRecordService{}.FindLastWhereScholarshipId(scholarshipID)
+	lastRecord, err := services.PointRecordService{}.FindLastByScholarshipID(scholarshipID)
 
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{

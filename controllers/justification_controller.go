@@ -10,11 +10,11 @@ func (JustificativaController) Create(c *gin.Context) {
 	// Todo
 }
 
-func (JustificativaController) RetrieveAll(c *gin.Context) {
+func (JustificativaController) FindAll(c *gin.Context) {
 	// Todo
 }
 
-func (JustificativaController) RetrieveAllWhereBolsistaId(c *gin.Context) {
+func (JustificativaController) FindAllByScholarshipID(c *gin.Context) {
 	// Todo
 }
 

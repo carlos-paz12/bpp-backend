@@ -22,18 +22,18 @@ func (AuthService) Login(username, password string) (*models.LoginResponse, erro
 
 	role := "user"
 	adminRepo := repository.AdminRepository{}
-	if _, err := adminRepo.FindByUserId(user.Id); err == nil {
+	if _, err := adminRepo.FindByUserID(user.ID); err == nil {
 		role = "admin"
 	} else {
 		scholarRepo := repository.ScholarshipRepository{}
-		if _, err := scholarRepo.FindByUserId(user.Id); err == nil {
+		if _, err := scholarRepo.FindByUserID(user.ID); err == nil {
 			role = "bolsista"
 		}
 	}
 
 	claims := models.JwtCustomClaims{
 		Role:   role,
-		UserID: user.Id,
+		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(8 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -49,6 +49,6 @@ func (AuthService) Login(username, password string) (*models.LoginResponse, erro
 	return &models.LoginResponse{
 		Token: tokenString,
 		Role:  role,
-		User:  user,
+		User:  *user,
 	}, nil
 }

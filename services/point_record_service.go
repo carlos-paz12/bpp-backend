@@ -11,12 +11,12 @@ func (PointRecordService) Create(scholarshipID int64) (models.PointRecord, error
 	return models.PointRecord{}, nil
 }
 
-func (PointRecordService) FindAllWhereScholarshipId(scholarshipID int64) ([]models.PointRecord, error) {
+func (PointRecordService) FindAllByScholarshipID(scholarshipID int64) ([]models.PointRecord, error) {
 	// TODO
 	return []models.PointRecord{}, nil
 }
 
-func (PointRecordService) FindLastWhereScholarshipId(scholarshipID int64) (*models.PointRecord, error) {
+func (PointRecordService) FindLastByScholarshipID(scholarshipID int64) (*models.PointRecord, error) {
 	// TODO
 	return &models.PointRecord{}, nil
 }

@@ -10,7 +10,7 @@ func (AdminController) Create(c *gin.Context) {
 	// Todo
 }
 
-func (AdminController) RetrieveAll(c *gin.Context) {
+func (AdminController) FindAll(c *gin.Context) {
 	// Todo
 }
 

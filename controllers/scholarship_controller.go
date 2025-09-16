@@ -10,7 +10,7 @@ func (BolsistaController) Create(c *gin.Context) {
 	// Todo
 }
 
-func (BolsistaController) RetrieveAll(c *gin.Context) {
+func (BolsistaController) FindAll(c *gin.Context) {
 	// Todo
 }
 
