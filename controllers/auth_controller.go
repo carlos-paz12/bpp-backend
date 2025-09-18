@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"spe/models"
 	"spe/services"
 
 	"github.com/gin-gonic/gin"
@@ -15,26 +16,29 @@ func (AuthController) Login(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
-	err := c.ShouldBindJSON(&body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":  "Corpo de requisição inválido.",
-			"status": http.StatusBadRequest,
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, models.APIResponse{
+			Message:  "",
+			Error:    err.Error(),
+			HttpCode: http.StatusBadRequest,
 		})
 		return
 	}
 
-	token, err := services.AuthService{}.Login(body.Username, body.Password)
+	loginResponse, err := services.AuthService{}.Login(body.Username, body.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error":  "Usuário ou senha inválidos.",
-			"status": http.StatusUnauthorized,
+		c.JSON(http.StatusBadRequest, models.APIResponse{
+			Message:  "",
+			Error:    err.Error(),
+			HttpCode: http.StatusBadRequest,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token":  token,
-		"status": http.StatusOK,
+	c.JSON(http.StatusOK, models.APIResponse{
+		Data:     loginResponse,
+		Message:  "user logged in successfully.",
+		Error:    "",
+		HttpCode: http.StatusOK,
 	})
 }

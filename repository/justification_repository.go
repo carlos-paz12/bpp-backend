@@ -2,7 +2,7 @@ package repository
 
 type JustificationRepository struct{}
 
-func (JustificationRepository) Create() {
+func (JustificationRepository) Save() {
 	// Todo
 }
 

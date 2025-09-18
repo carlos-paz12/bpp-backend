@@ -4,20 +4,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type JustificativaController struct{}
+type JustificationController struct{}
 
-func (JustificativaController) Create(c *gin.Context) {
+func (JustificationController) GetMyJustifications(c *gin.Context) {
 	// Todo
 }
 
-func (JustificativaController) FindAll(c *gin.Context) {
+func (JustificationController) CreateMyJustification(c *gin.Context) {
 	// Todo
 }
 
-func (JustificativaController) FindAllByScholarshipID(c *gin.Context) {
+func (JustificationController) GetAllJustifications(c *gin.Context) {
 	// Todo
 }
 
-func (JustificativaController) Update(c *gin.Context) {
-	// TOdo
+func (JustificationController) GetJustificationsByScholarshipID(c *gin.Context) {
+	// Todo
+}
+
+func (JustificationController) UpdateJustification(c *gin.Context) {
+	// Todo
 }

@@ -1,6 +1,8 @@
 package repository
 
-import "spe/models"
+import (
+	"spe/models"
+)
 
 var (
 	scholarshipsIDs int64 = 1
@@ -38,7 +40,7 @@ func init() {
 
 type ScholarshipRepository struct{}
 
-func (ScholarshipRepository) Create() {
+func (ScholarshipRepository) Save() {
 	// Todo
 }
 
@@ -46,9 +48,13 @@ func (ScholarshipRepository) FindAll() {
 	// Todo
 }
 
-func (ScholarshipRepository) FindByUserID(id int64) (models.Scholarship, error) {
-	// Todo
-	return models.Scholarship{}, nil
+func (ScholarshipRepository) FindByUserID(uid int64) (*models.Scholarship, bool) {
+	for _, s := range scholarships {
+		if s.UserID == uid {
+			return s, true
+		}
+	}
+	return nil, false
 }
 
 func (ScholarshipRepository) Update() {

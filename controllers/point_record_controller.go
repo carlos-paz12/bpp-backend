@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"spe/models"
 	"spe/services"
 
 	"net/http"
@@ -10,56 +11,73 @@ import (
 
 type PointRecordController struct{}
 
-func (PointRecordController) Create(c *gin.Context) {
-	scholarshipID := c.GetInt64("user_id")
-	newPointRecord, err := services.PointRecordService{}.Create(scholarshipID)
+func (PointRecordController) GetMyPoints(c *gin.Context) {
+	uid := c.GetInt64("user_id")
+	records, err := services.PointRecordService{}.GetMyPoints(uid)
 
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error":  "Erro ao registrar ponto.",
-			"status": http.StatusForbidden,
+		c.JSON(http.StatusForbidden, models.APIResponse{
+			Message:  "",
+			Error:    err.Error(),
+			HttpCode: http.StatusForbidden,
 		})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"novo_ponto": newPointRecord,
-		"error":      "",
-		"status":     http.StatusOK,
+	c.JSON(http.StatusOK, models.APIResponse{
+		Data:     records,
+		Message:  "it's ok.",
+		Error:    "",
+		HttpCode: http.StatusOK,
 	})
 }
 
-func (PointRecordController) FindAllByScholarshipID(c *gin.Context) {
-	scholarshipID := c.GetInt64("user_id")
-	pointRecords, err := services.PointRecordService{}.FindAllByScholarshipID(scholarshipID)
+func (PointRecordController) RegisterMyPoint(c *gin.Context) {
+	uid := c.GetInt64("user_id")
+	record, err := services.PointRecordService{}.RegisterMyPoint(uid)
 
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error":  "Erro ao recuperar pontos.",
-			"status": http.StatusForbidden,
+		c.JSON(http.StatusForbidden, models.APIResponse{
+			Message:  "",
+			Error:    err.Error(),
+			HttpCode: http.StatusForbidden,
 		})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"pontos": pointRecords,
-		"error":  "",
-		"status": http.StatusOK,
+	c.JSON(http.StatusOK, models.APIResponse{
+		Data:     record,
+		Message:  "it's ok.",
+		Error:    "",
+		HttpCode: http.StatusOK,
 	})
 }
 
-func (PointRecordController) FindLastByScholarshipID(c *gin.Context) {
-	scholarshipID := c.GetInt64("user_id")
-	lastRecord, err := services.PointRecordService{}.FindLastByScholarshipID(scholarshipID)
+func (PointRecordController) GetMyLastPoint(c *gin.Context) {
+	uid := c.GetInt64("user_id")
+	last, err := services.PointRecordService{}.GetMyLastPoint(uid)
 
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error":  "Erro ao recuperar pontos.",
-			"status": http.StatusForbidden,
+		c.JSON(http.StatusForbidden, models.APIResponse{
+			Message:  "",
+			Error:    err.Error(),
+			HttpCode: http.StatusForbidden,
 		})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"ultimo": lastRecord,
-		"error":  "",
-		"status": http.StatusOK,
+	c.JSON(http.StatusOK, models.APIResponse{
+		Data:     last,
+		Message:  "it's ok.",
+		Error:    "",
+		HttpCode: http.StatusOK,
 	})
+}
+
+func (PointRecordController) GetPointsByScholarshipID(c *gin.Context) {
+	// Todo
+}
+
+func (PointRecordController) GetLastPointByScholarshipID(c *gin.Context) {
+	// Todo
 }

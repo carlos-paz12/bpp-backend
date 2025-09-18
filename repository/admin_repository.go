@@ -1,6 +1,8 @@
 package repository
 
-import "spe/models"
+import (
+	"spe/models"
+)
 
 var (
 	adminsIDs int64 = 1
@@ -25,7 +27,7 @@ func init() {
 
 type AdminRepository struct{}
 
-func (AdminRepository) Create() {
+func (AdminRepository) Save() {
 	// Todo
 }
 
@@ -33,9 +35,13 @@ func (AdminRepository) FindAll() {
 	// Todo
 }
 
-func (AdminRepository) FindByUserID(id int64) (models.Admin, error) {
-	// Todo
-	return models.Admin{}, nil
+func (AdminRepository) FindByUserID(uid int64) (*models.Admin, bool) {
+	for _, a := range admins {
+		if a.UserID == uid {
+			return a, true
+		}
+	}
+	return nil, false
 }
 
 func (AdminRepository) Update() {

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"spe/models"
 )
 
@@ -62,19 +61,15 @@ func init() {
 	userIDs++
 }
 
-// UserRepository é um repositório de usuários em memória.
 type UserRepository struct{}
 
-// Create adiciona um novo usuário no repositório.
-func (UserRepository) Create(user *models.User) error {
-	if _, exists := users[user.ID]; exists {
-		return errors.New("Usuário já existe.")
-	}
-	users[user.ID] = user
-	return nil
+func (UserRepository) Save(u *models.User) *models.User {
+	u.ID = userIDs
+	userIDs++
+	users[u.ID] = u
+	return u
 }
 
-// FindAll retorna todos os usuários do repositório.
 func (UserRepository) FindAll() []*models.User {
 	list := make([]*models.User, 0, len(users))
 	for _, u := range users {
@@ -83,38 +78,34 @@ func (UserRepository) FindAll() []*models.User {
 	return list
 }
 
-// FindByID retorna um usuário pelo ID.
-func (UserRepository) FindByID(id int64) (*models.User, error) {
-	if user, ok := users[id]; ok {
-		return user, nil
+func (UserRepository) FindByID(uid int64) (*models.User, bool) {
+	if user, ok := users[uid]; ok {
+		return user, true
 	}
-	return nil, errors.New("Usuário não encontrado.")
+	return nil, false
 }
 
-// FindByUsername retorna um usuário pelo username.
-func (UserRepository) FindByUsername(username string) (*models.User, error) {
+func (UserRepository) FindByUsername(u string) (*models.User, bool) {
 	for _, user := range users {
-		if user.Username == username {
-			return user, nil
+		if user.Username == u {
+			return user, true
 		}
 	}
-	return nil, errors.New("Usuário não encontrado.")
+	return nil, false
 }
 
-// Update altera os dados de um usuário existente.
-func (UserRepository) Update(user *models.User) error {
-	if _, ok := users[user.ID]; !ok {
-		return errors.New("Usuário não encontrado.")
+func (UserRepository) Update(u *models.User) bool {
+	if _, ok := users[u.ID]; !ok {
+		return false
 	}
-	users[user.ID] = user
-	return nil
+	users[u.ID] = u
+	return true
 }
 
-// Delete remove um usuário pelo ID.
-func (UserRepository) Delete(id int64) error {
-	if _, ok := users[id]; !ok {
-		return errors.New("Usuário não encontrado.")
+func (UserRepository) Delete(uid int64) bool {
+	if _, ok := users[uid]; !ok {
+		return false
 	}
-	delete(users, id)
-	return nil
+	delete(users, uid)
+	return true
 }

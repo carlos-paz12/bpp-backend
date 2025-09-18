@@ -4,16 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type BolsistaController struct{}
+type ScholarshipController struct{}
 
-func (BolsistaController) Create(c *gin.Context) {
+func (ScholarshipController) Me(c *gin.Context) {
 	// Todo
 }
 
-func (BolsistaController) FindAll(c *gin.Context) {
+func (ScholarshipController) CreateScholarship(c *gin.Context) {
 	// Todo
 }
 
-func (BolsistaController) Delete(c *gin.Context) {
+func (ScholarshipController) GetAllScholarships(c *gin.Context) {
+	// Todo
+}
+
+func (ScholarshipController) DeleteScholarshipByID(c *gin.Context) {
 	// Todo
 }

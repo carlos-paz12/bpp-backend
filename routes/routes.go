@@ -8,132 +8,159 @@ import (
 )
 
 // SetupRoutes define todas as rotas da API SPE.
-// Aqui documentamos:
-// - Quem pode acessar cada rota (público, bolsista, admin)
-// - Propósito da rota
-// - Método HTTP
-// - URL
-// - Expectativa de body
-// - Retorno
 func SetupRoutes(r *gin.Engine) {
 	api := r.Group("/spe/api/v1")
 	{
 		// == Rotas públicas (não requerem autenticação).
 
-		// @Brief	Realiza autenticação de usuário na API e retorna token de autenticação.
-		// @Method	POST
-		// @URL		/auth/login
-		// @Body	{ "username": "", "senha": "" }
-		// @Return	{ "token": "", "error": "", "status": "" }
+		/* @Brief	Realiza autenticação de usuário na API e retorna token de autenticação.
+		 * @Method	POST
+		 * @URL		/spe/api/v1/auth/login
+		 * @Body	{
+		 *				"username": "",
+		 *				"password": ""
+		 *			}
+		 * @Return	{
+		 *				"data": {
+		 *							"token": "",
+		 *							"role": "",
+		 *							"user": {
+		 *										"id": n,
+		 *										"name": ""
+		 *										"username": ""
+		 *										"email": ""
+		 *							}
+		 *				},
+		 *				"error": "",
+		 *				"status": n
+		 *			}
+		 */
 		api.POST("/auth/login", controllers.AuthController{}.Login)
 
 		// == Rotas protegidas (requerem autenticação).
-		// Isto é, para qualquer uma das rotas a seguir, deve ter obrigatoriamente no corpo da requisição o token JWT.
+
+		/*
+		 * Para qualquer uma das rotas a seguir, deve ter enviar, obrigatoriamente, no
+		 * header da requisição o campo "Authorization" contêndo o token recebido na
+		 * autenticação
+		 */
+
 		auth := api.Group("/")
 		auth.Use(middlewares.AuthMiddleware())
 		{
-			// === Rotas do bolsista autenticado (/me).
-			bolsistas := auth.Group("/me")
-			bolsistas.Use(middlewares.RequireRole("bolsista"))
+			// === Rotas de scholarships (/scholarships).
+
+			scholarships := auth.Group("/scholarships")
+			scholarships.Use(middlewares.RequireRole("scholarship"))
 			{
-				// @Brief     Retorna todos os registros de ponto do bolsista autenticado.
-				// @Method    GET
-				// @URL       /me/pontos
-				// @Return    { "pontos": [], "error": "", "status": "" }
-				bolsistas.GET("/pontos", controllers.PointRecordController{}.FindAllByScholarshipID)
+				scholarshipsMe := scholarships.Group("/me")
+				{
+					scholarshipsMe.GET("/", controllers.ScholarshipController{}.Me)
 
-				// @Brief     Retorna último registro de ponto do bolsista autenticado.
-				// @Method    GET
-				// @URL       /me/pontos/ultimo
-				// @Return    { "ultimo_ponto": {}, "error": "", "status": "" }
-				bolsistas.GET("/pontos/ultimo", controllers.PointRecordController{}.FindLastByScholarshipID)
+					/* @Brief     Retorna todos os registros de ponto do bolsista autenticado.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/scholarships/me/pointRecords
+					 */
+					scholarshipsMe.GET("/pointRecords", controllers.PointRecordController{}.GetMyPoints)
 
-				// @Brief     Registra novo ponto (entrada | saída).
-				// @Method    POST
-				// @URL       /me/pontos
-				// @Return    { "error": "", "status": "" }
-				bolsistas.POST("/pontos", controllers.PointRecordController{}.Create)
+					/* @Brief     Insere novo registro de ponto.
+					 * @Method    POST
+					 * @URL       /spe/api/v1/scholarships/me/pointRecords
+					 */
+					scholarshipsMe.POST("/pointRecords", controllers.PointRecordController{}.RegisterMyPoint)
 
-				// @Brief     Retorna todas as justificativas do bolsista autenticado.
-				// @Method    GET
-				// @URL       /me/justificativas
-				// @Return    { "justificativas": [], "error": "", "status": "" }
-				bolsistas.GET("/justificativas", controllers.JustificativaController{}.FindAllByScholarshipID)
+					/* @Brief     Retorna último registro de ponto do bolsista autenticado.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/scholarships/me/pointRecords/last
+					 */
+					scholarshipsMe.GET("/pointRecords/last", controllers.PointRecordController{}.GetMyLastPoint)
 
-				// @Brief     Registra nova justificativa.
-				// @Method    POST
-				// @URL       /me/justificativas
-				// @Body      { "data": "DD-MM-AAAA", "horas": "", "minutos": "", "motivo": "..." }
-				// @Return    { "error": "", "status": "" }
-				bolsistas.POST("/justificativas", controllers.JustificativaController{}.Create)
+					/* @Brief     Retorna todas as justifications do bolsista autenticado.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/scholarships/me/justifications
+					 */
+					scholarshipsMe.GET("/justifications", controllers.JustificationController{}.GetMyJustifications)
+
+					/* @Brief     Insere nova justificativa.
+					 * @Method    POST
+					 * @URL       /spe/api/v1/scholarships/me/justifications
+					 */
+					scholarshipsMe.POST("/justifications", controllers.JustificationController{}.CreateMyJustification)
+				}
 			}
 
-			// === Rotas do admin (/admin).
+			// === Rotas de admins (/admins).
+
 			admins := auth.Group("/admins")
 			admins.Use(middlewares.RequireRole("admin"))
 			{
-				// @Brief     Cadastra um novo usuário do tipo admin.
-				// @Method    POST
-				// @URL       /admins
-				// @Body      { "name": "", "username": "", "password": "", "email": "" }
-				// @Return    { "error": "", "status": "" }
-				admins.POST("/", controllers.AdminController{}.Create)
+				/* @Brief     Cadastra um novo usuário do tipo admin.
+				 * @Method    POST
+				 * @URL       /spe/api/v1/admins
+				 */
+				admins.POST("/", controllers.AdminController{}.CreateAdmin)
 
-				// @Brief     Lista todos os usuários do tipo admin.
-				// @Method    GET
-				// @URL       /admins
-				// @Return    { "admins": [], "error": "", "status": "" }
-				admins.GET("/", controllers.AdminController{}.FindAll)
+				/* @Brief     Lista todos os usuários do tipo admin.
+				 * @Method    GET
+				 * @URL       /spe/api/v1/admins
+				 */
+				admins.GET("/", controllers.AdminController{}.GetAllAdmins)
 
-				// @Brief     Deleta um admin pelo ID.
-				// @Method    DELETE
-				// @URL       /admins/:id
-				// @Return    { "error": "", "status": "" }
-				admins.DELETE("/:id", controllers.AdminController{}.Delete)
+				/* @Brief     Deleta um admin pelo ID.
+				 * @Method    DELETE
+				 * @URL       /spe/api/v1/admins/:id
+				 */
+				admins.DELETE("/:id", controllers.AdminController{}.DeleteAdminByID)
 
-				// @Brief     Cria um novo usuário do tipo bolsista.
-				// @Method    POST
-				// @URL       /admins/bolsistas
-				// @Body      { "name": "", "username": "", "password": "", "email": "", "matricula": "", "horas_mensais": "" }
-				// @Return    { "error": "", "status": "" }
-				admins.POST("/bolsistas", controllers.BolsistaController{}.Create)
+				admins.GET("/me", controllers.AdminController{}.Me)
 
-				// @Brief     Lista todos os usuários do tipo bolsista.
-				// @Method    GET
-				// @URL       /admins/bolsistas
-				// @Return    { "bolsistas": [], "error": "", "status": "" }
-				admins.GET("/bolsistas", controllers.BolsistaController{}.FindAll)
+				adminScholarships := admins.Group("/scholarships")
+				{
+					/* @Brief     Cria um novo usuário do tipo bolsista.
+					 * @Method    POST
+					 * @URL       /spe/api/v1/admins/scholarships
+					 */
+					adminScholarships.POST("/", controllers.ScholarshipController{}.CreateScholarship)
 
-				// @Brief     Deleta um bolsista pelo ID.
-				// @Method    DELETE
-				// @URL       /admins/bolsistas/:id
-				// @Return    { "error": "", "status": "" }
-				admins.DELETE("/bolsistas/:id", controllers.BolsistaController{}.Delete)
+					/* @Brief     Lista todos os usuários do tipo bolsista.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/admins/scholarships
+					 */
+					adminScholarships.GET("/", controllers.ScholarshipController{}.GetAllScholarships)
 
-				// @Brief     Lista todos os pontos de um bolsista específico.
-				// @Method    GET
-				// @URL       /admins/bolsistas/:id/pontos
-				// @Return    { "pontos": [], "error": "", "status": "" }
-				admins.GET("/bolsistas/:id/pontos", controllers.PointRecordController{}.FindAllByScholarshipID)
+					/* @Brief     Deleta um bolsista pelo ID.
+					 * @Method    DELETE
+					 * @URL       /spe/api/v1/admins/scholarships/:id
+					 */
+					adminScholarships.DELETE("/:id", controllers.ScholarshipController{}.DeleteScholarshipByID)
 
-				// @Brief     Lista todas as justificativas de um bolsista específico.
-				// @Method    GET
-				// @URL       /admins/bolsistas/:id/justificativas
-				// @Return    { "justificativas": [], "error": "", "status": "" }
-				admins.GET("/bolsistas/:id/justificativas", controllers.JustificativaController{}.FindAllByScholarshipID)
+					/* @Brief     Lista todos os records de um bolsista específico.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/admins/scholarships/:id/pointRecords
+					 */
+					adminScholarships.GET("/:id/pointRecords", controllers.PointRecordController{}.GetPointsByScholarshipID)
 
-				// @Brief     Lista todas as justificativas.
-				// @Method    GET
-				// @URL       /admins/justificativas
-				// @Return    { "justificativas": [], "error": "", "status": "" }
-				admins.GET("/justificativas", controllers.JustificativaController{}.FindAll)
+					/* @Brief     Lista todas as justifications de um bolsista específico.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/admins/scholarships/:id/justifications
+					 */
+					adminScholarships.GET("/:id/justifications", controllers.JustificationController{}.GetJustificationsByScholarshipID)
+				}
 
-				// @Brief     Atualiza uma justificativa (aprovar ou rejeitar).
-				// @Method    PATCH
-				// @URL       /admins/justificativas/:id
-				// @Body      { "status": "aprovado" | "rejeitado", "comentario": "" }
-				// @Return    { "error": "", "status": "" }
-				admins.PATCH("/justificativas/:id", controllers.JustificativaController{}.Update)
+				adminJustifications := admins.Group("/justifications")
+				{
+					/* @Brief     Lista todas as justifications.
+					 * @Method    GET
+					 * @URL       /spe/api/v1/admins/justifications
+					 */
+					adminJustifications.GET("/", controllers.JustificationController{}.GetAllJustifications)
+
+					/* @Brief     Atualiza uma justificativa (aprovar ou rejeitar).
+					 * @Method    PATCH
+					 * @URL       /spe/api/v1/admins/justifications/:id
+					 */
+					adminJustifications.PATCH("/:id", controllers.JustificationController{}.UpdateJustification)
+				}
 			}
 		}
 	}

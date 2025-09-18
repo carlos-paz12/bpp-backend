@@ -23,9 +23,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		 */
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error":  "Token não fornecido.",
-				"status": http.StatusUnauthorized,
+			c.JSON(http.StatusBadRequest, models.APIResponse{
+				Message:  "",
+				Error:    "token not provided.",
+				HttpCode: http.StatusUnauthorized,
 			})
 			c.Abort()
 			return
@@ -38,15 +39,16 @@ func AuthMiddleware() gin.HandlerFunc {
 		 */
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error":  "Token inválido.",
-				"status": http.StatusUnauthorized,
+			c.JSON(http.StatusBadRequest, models.APIResponse{
+				Message:  "",
+				Error:    "invalid token.",
+				HttpCode: http.StatusUnauthorized,
 			})
 			c.Abort()
 			return
 		}
 
-		tokenString := parts[1]             //!< Token JWT enviado na requisição.
+		tokenSigned := parts[1]             //!< Token JWT enviado na requisição.
 		claims := &models.JwtCustomClaims{} //!< Claims personalizadas.
 
 		/*!<
@@ -55,10 +57,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		 * Usa jwtKey para validar a assinatura.
 		 * Decodifica o payload no struct `claims`.
 		 */
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+		token, err := jwt.ParseWithClaims(tokenSigned, claims, func(token *jwt.Token) (any, error) {
 			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
-				return nil, errors.New("Método de assinatura inesperado.")
+				return nil, errors.New("invalid token.")
 			}
 			return jwtKey, nil
 		})
@@ -68,9 +70,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		 * Retorna 401 Unauthorized para o cliente.
 		 */
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error":  "Token inválido.",
-				"status": http.StatusUnauthorized,
+			c.JSON(http.StatusBadRequest, models.APIResponse{
+				Message:  "",
+				Error:    err.Error(),
+				HttpCode: http.StatusUnauthorized,
 			})
 			c.Abort()
 			return

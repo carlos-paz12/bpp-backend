@@ -6,14 +6,18 @@ import (
 
 type AdminController struct{}
 
-func (AdminController) Create(c *gin.Context) {
+func (AdminController) Me(c *gin.Context) {
 	// Todo
 }
 
-func (AdminController) FindAll(c *gin.Context) {
+func (AdminController) CreateAdmin(c *gin.Context) {
 	// Todo
 }
 
-func (AdminController) Delete(c *gin.Context) {
+func (AdminController) GetAllAdmins(c *gin.Context) {
+	// Todo
+}
+
+func (AdminController) DeleteAdminByID(c *gin.Context) {
 	// Todo
 }
