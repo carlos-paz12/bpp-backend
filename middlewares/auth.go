@@ -23,7 +23,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		 */
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusBadRequest, models.APIResponse{
+			c.JSON(http.StatusBadRequest, models.ApiResponse{
 				Message:  "",
 				Error:    "token not provided.",
 				HttpCode: http.StatusUnauthorized,
@@ -39,7 +39,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		 */
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			c.JSON(http.StatusBadRequest, models.APIResponse{
+			c.JSON(http.StatusBadRequest, models.ApiResponse{
 				Message:  "",
 				Error:    "invalid token.",
 				HttpCode: http.StatusUnauthorized,
@@ -70,7 +70,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		 * Retorna 401 Unauthorized para o cliente.
 		 */
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusBadRequest, models.APIResponse{
+			c.JSON(http.StatusBadRequest, models.ApiResponse{
 				Message:  "",
 				Error:    err.Error(),
 				HttpCode: http.StatusUnauthorized,

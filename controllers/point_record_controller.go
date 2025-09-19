@@ -16,7 +16,7 @@ func (PointRecordController) GetMyPoints(c *gin.Context) {
 	records, err := services.PointRecordService{}.GetMyPoints(uid)
 
 	if err != nil {
-		c.JSON(http.StatusForbidden, models.APIResponse{
+		c.JSON(http.StatusForbidden, models.ApiResponse{
 			Message:  "",
 			Error:    err.Error(),
 			HttpCode: http.StatusForbidden,
@@ -24,7 +24,7 @@ func (PointRecordController) GetMyPoints(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.APIResponse{
+	c.JSON(http.StatusOK, models.ApiResponse{
 		Data:     records,
 		Message:  "it's ok.",
 		Error:    "",
@@ -37,7 +37,7 @@ func (PointRecordController) RegisterMyPoint(c *gin.Context) {
 	record, err := services.PointRecordService{}.RegisterMyPoint(uid)
 
 	if err != nil {
-		c.JSON(http.StatusForbidden, models.APIResponse{
+		c.JSON(http.StatusForbidden, models.ApiResponse{
 			Message:  "",
 			Error:    err.Error(),
 			HttpCode: http.StatusForbidden,
@@ -45,7 +45,7 @@ func (PointRecordController) RegisterMyPoint(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.APIResponse{
+	c.JSON(http.StatusOK, models.ApiResponse{
 		Data:     record,
 		Message:  "it's ok.",
 		Error:    "",
@@ -58,7 +58,7 @@ func (PointRecordController) GetMyLastPoint(c *gin.Context) {
 	last, err := services.PointRecordService{}.GetMyLastPoint(uid)
 
 	if err != nil {
-		c.JSON(http.StatusForbidden, models.APIResponse{
+		c.JSON(http.StatusForbidden, models.ApiResponse{
 			Message:  "",
 			Error:    err.Error(),
 			HttpCode: http.StatusForbidden,
@@ -66,7 +66,7 @@ func (PointRecordController) GetMyLastPoint(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.APIResponse{
+	c.JSON(http.StatusOK, models.ApiResponse{
 		Data:     last,
 		Message:  "it's ok.",
 		Error:    "",

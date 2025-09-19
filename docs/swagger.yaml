@@ -1,0 +1,63 @@
+basePath: /spe/api/v1
+definitions:
+  models.ApiResponse:
+    properties:
+      data:
+        description: Dados retornados pelo endpoint. Pode ser qualquer tipo e é opcional.
+      error:
+        description: Mensagem de erro detalhando o motivo da falha, caso exista.
+        type: string
+      http_code:
+        description: Código HTTP da resposta.
+        type: integer
+      message:
+        description: Mensagem de sucesso ou informação geral sobre a requisição.
+        type: string
+    type: object
+  models.AuthRequest:
+    properties:
+      password:
+        description: Senha do usuário.
+        type: string
+      username:
+        description: Username do usuário que será autenticado.
+        type: string
+    required:
+    - password
+    - username
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API do Sistema de Ponto Eletrônico - SPE
+  title: SPE API
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Realiza autenticação de usuário a partir de **username** e **password**
+        e retorna token de acesso.
+      parameters:
+      - description: Credenciais de login.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      summary: Autenticação de usuário.
+      tags:
+      - auth
+swagger: "2.0"

@@ -1,0 +1,92 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API do Sistema de Ponto Eletrônico - SPE",
+        "title": "SPE API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/spe/api/v1",
+    "paths": {
+        "/auth": {
+            "post": {
+                "description": "Realiza autenticação de usuário a partir de **username** e **password** e retorna token de acesso.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Autenticação de usuário.",
+                "parameters": [
+                    {
+                        "description": "Credenciais de login.",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ApiResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "description": "Dados retornados pelo endpoint. Pode ser qualquer tipo e é opcional."
+                },
+                "error": {
+                    "description": "Mensagem de erro detalhando o motivo da falha, caso exista.",
+                    "type": "string"
+                },
+                "http_code": {
+                    "description": "Código HTTP da resposta.",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "Mensagem de sucesso ou informação geral sobre a requisição.",
+                    "type": "string"
+                }
+            }
+        },
+        "models.AuthRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "description": "Senha do usuário.",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Username do usuário que será autenticado.",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

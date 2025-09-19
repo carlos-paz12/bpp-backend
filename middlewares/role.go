@@ -18,7 +18,7 @@ func RequireRole(requiredRole string) gin.HandlerFunc {
 		 */
 		role, exists := c.Get("role")
 		if !exists || role != requiredRole {
-			c.JSON(http.StatusForbidden, models.APIResponse{
+			c.JSON(http.StatusForbidden, models.ApiResponse{
 				Message:  "",
 				Error:    "access denied.",
 				HttpCode: http.StatusForbidden,

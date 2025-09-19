@@ -10,14 +10,21 @@ import (
 
 type AuthController struct{}
 
-func (AuthController) Login(c *gin.Context) {
-	var body struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+// Authenticate godoc
+// @Summary Autenticação de usuário.
+// @Description Realiza autenticação de usuário a partir de **username** e **password** e retorna token de acesso.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param Body body models.AuthRequest true "Credenciais de login."
+// @Success 200 {object} models.ApiResponse
+// @Failure 400 {object} models.ApiResponse
+// @Router /authenticate [post]
+func (AuthController) Authenticate(c *gin.Context) {
+	body := &models.AuthRequest{}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, models.APIResponse{
+		c.JSON(http.StatusBadRequest, models.ApiResponse{
 			Message:  "",
 			Error:    err.Error(),
 			HttpCode: http.StatusBadRequest,
@@ -27,7 +34,7 @@ func (AuthController) Login(c *gin.Context) {
 
 	loginResponse, err := services.AuthService{}.Login(body.Username, body.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, models.APIResponse{
+		c.JSON(http.StatusBadRequest, models.ApiResponse{
 			Message:  "",
 			Error:    err.Error(),
 			HttpCode: http.StatusBadRequest,
@@ -35,7 +42,7 @@ func (AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.APIResponse{
+	c.JSON(http.StatusOK, models.ApiResponse{
 		Data:     loginResponse,
 		Message:  "user logged in successfully.",
 		Error:    "",
