@@ -7,20 +7,24 @@
 
 ```
 bpp-backend/
-├── controllers/        # Lógica de controle das rotas.
-├── middlewares/        # Middlewares de autenticação e autorização.
-├── models/             # Modelos de dados e lógica de negócios.
-├── routes/             # Definição das rotas da API.
-├── go.mod              # Módulo Go e dependências.
-├── go.sum              # Checksum das dependências.
-└── main.go             # Ponto de entrada da aplicação.
+├── controllers/        # Funções que implementam a lógica dos endpoints da API.
+├── docs/               # Arquivos de documentação gerados pelo Swagger.
+├── middlewares/        # Middlewares, como autenticação e autorização.
+├── models/             # Estruturas de dados e validações.
+├── repository/         # Acesso e manipulação de dados (repositórios/banco de dados).
+├── routes/             # Configuração e registro das rotas da API.
+├── services/           # Regras de negócio e integração entre controllers e repositórios.
+├── go.mod              # Definição do módulo Go e dependências.
+├── go.sum              # Checksum das dependências para garantir integridade.
+├── main.go             # Ponto de entrada da aplicação.
+└── README.md           # Documentação do projeto e instruções de uso.
 ```
 
 
 
 ## Requirements
 
-- Go 1.22 or upper.
+- Go 1.25 or upper.
 
 
 
