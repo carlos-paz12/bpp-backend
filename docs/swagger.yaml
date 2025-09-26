@@ -1,30 +1,47 @@
 basePath: /spe/api/v1
 definitions:
-  models.ApiResponse:
+  dto.ErroDTO:
     properties:
-      data:
-        description: Dados retornados pelo endpoint. Pode ser qualquer tipo e é opcional.
-      error:
-        description: Mensagem de erro detalhando o motivo da falha, caso exista.
-        type: string
-      http_code:
-        description: Código HTTP da resposta.
+      codigo:
         type: integer
-      message:
-        description: Mensagem de sucesso ou informação geral sobre a requisição.
+      detalhes:
+        type: string
+      mensagem:
         type: string
     type: object
-  models.AuthRequest:
+  dto.MembroDTO:
     properties:
-      password:
-        description: Senha do usuário.
+      celular:
         type: string
-      username:
-        description: Username do usuário que será autenticado.
+      email:
+        type: string
+      matricula:
+        type: string
+      membro_id:
+        type: integer
+      nome_completo:
+        type: string
+      nome_usuario:
+        type: string
+    type: object
+  dto.ReqAutenticacaoDTO:
+    properties:
+      nome_usuario:
+        type: string
+      senha:
         type: string
     required:
-    - password
-    - username
+    - nome_usuario
+    - senha
+    type: object
+  dto.ResAutenticacaoDTO:
+    properties:
+      cargo:
+        type: string
+      membro:
+        $ref: '#/definitions/dto.MembroDTO'
+      token:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -33,31 +50,30 @@ info:
   title: SPE API
   version: "1.0"
 paths:
-  /auth:
+  /login:
     post:
       consumes:
       - application/json
-      description: Realiza autenticação de usuário a partir de **username** e **password**
-        e retorna token de acesso.
+      description: Realiza autenticação de membro na API e retorna token de autenticação.
       parameters:
-      - description: Credenciais de login.
+      - description: Credenciais de login
         in: body
-        name: Body
+        name: request
         required: true
         schema:
-          $ref: '#/definitions/models.AuthRequest'
+          $ref: '#/definitions/dto.ReqAutenticacaoDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/dto.ResAutenticacaoDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ApiResponse'
-      summary: Autenticação de usuário.
+            $ref: '#/definitions/dto.ErroDTO'
+      summary: Autenticação de membro.
       tags:
-      - auth
+      - autenticação
 swagger: "2.0"
