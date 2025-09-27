@@ -35,8 +35,8 @@ func NovoAutenticacaoControlador(autenticacaoServ services.AutenticacaoServico) 
 // @Router       /login		[post]
 func (ctrl *AutenticacaoControladorImpl) Autenticar(c *gin.Context) {
 	req := &dto.ReqAutenticacaoDTO{}
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+	err := c.ShouldBindJSON(req)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErroDTO{
 			Mensagem: err.Error(),
 			Codigo:   http.StatusBadRequest,

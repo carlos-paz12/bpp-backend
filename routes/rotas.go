@@ -58,7 +58,7 @@ func ConfigurarRotas(r *gin.Engine) {
 				{
 					tecnico.GET("/")
 					tecnico.GET("/:id")
-					tecnico.POST("/")
+					tecnico.POST("/", ctrls.TecnicoAdministrativoCtrl.Post)
 					tecnico.PATCH("/:id")
 					tecnico.DELETE("/:id")
 				}
