@@ -31,22 +31,22 @@ func ConfigurarRotas(r *gin.Engine) {
 				tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
 				{
 					// Retorna todos os bolsistas.
-					tecnico.GET("/", ctrls.BolsistaCtrl.Get)
+					// tecnico.GET("/", ctrls.BolsistaCtrl.Get)
 					// Retorna os dados de um bolsista específico.
-					tecnico.GET("/:id", ctrls.BolsistaCtrl.GetByID)
+					// tecnico.GET("/:id", ctrls.BolsistaCtrl.GetByID)
 					// Cria novo bolsista.
 					tecnico.POST("/", ctrls.BolsistaCtrl.Post)
 					// Atualiza um bolsista existente.
-					tecnico.PATCH("/:id", ctrls.BolsistaCtrl.PatchByID)
+					// tecnico.PATCH("/:id", ctrls.BolsistaCtrl.PatchByID)
 					// Remove um bolsista existente.
-					tecnico.DELETE("/:id", ctrls.BolsistaCtrl.DeleteByID)
+					// tecnico.DELETE("/:id", ctrls.BolsistaCtrl.DeleteByID)
 				}
 
 				bolsista := bolsistas.Group("/me")
 				bolsista.Use(middlewares.RequerCargo("Bolsista"))
 				{
 					// Retorna todos os dados associados ao bolsista autenticado.
-					bolsista.GET("/", ctrls.BolsistaCtrl.GetMe)
+					// bolsista.GET("/", ctrls.BolsistaCtrl.GetMe)
 				}
 			}
 
@@ -56,39 +56,39 @@ func ConfigurarRotas(r *gin.Engine) {
 				tecnico := tecnicos.Group("/")
 				tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
 				{
-					tecnico.GET("/")
-					tecnico.GET("/:id")
+					// tecnico.GET("/")
+					// tecnico.GET("/:id")
 					tecnico.POST("/", ctrls.TecnicoAdministrativoCtrl.Post)
-					tecnico.PATCH("/:id")
-					tecnico.DELETE("/:id")
+					// tecnico.PATCH("/:id")
+					// tecnico.DELETE("/:id")
 				}
 			}
 
-			// Rotas de registros de ponto (/registrosPonto).
-			registrosPonto := autenticacao.Group("/registrosPonto")
-			{
-				tecnico := registrosPonto.Group("/")
-				tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
-				{
-					tecnico.GET("/")
-					tecnico.GET("/:id")
-					tecnico.PATCH("/:id")
-					tecnico.DELETE("/:id")
-				}
+			// // Rotas de registros de ponto (/registrosPonto).
+			// registrosPonto := autenticacao.Group("/registrosPonto")
+			// {
+			// 	tecnico := registrosPonto.Group("/")
+			// 	tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
+			// 	{
+			// 		tecnico.GET("/")
+			// 		tecnico.GET("/:id")
+			// 		tecnico.PATCH("/:id")
+			// 		tecnico.DELETE("/:id")
+			// 	}
 
-				bolsista := registrosPonto.Group("/me")
-				bolsista.Use(middlewares.RequerCargo("Bolsista"))
-				{
-					// Retorna todos os registros de ponto associados ao bolsista autenticado.
-					bolsista.GET("/")
-					// Cria novo registro de ponto associado ao bolsista autenticado.
-					bolsista.POST("/")
-					// Retorna o último registro de ponto associado ao bolsista autenticado.
-					bolsista.GET("/ultimo")
-				}
-			}
+			// 	bolsista := registrosPonto.Group("/me")
+			// 	bolsista.Use(middlewares.RequerCargo("Bolsista"))
+			// 	{
+			// 		// Retorna todos os registros de ponto associados ao bolsista autenticado.
+			// 		bolsista.GET("/")
+			// 		// Cria novo registro de ponto associado ao bolsista autenticado.
+			// 		bolsista.POST("/")
+			// 		// Retorna o último registro de ponto associado ao bolsista autenticado.
+			// 		bolsista.GET("/ultimo")
+			// 	}
+			// }
 
-			// justificativas := aut.Group("/justificativas")
+			// justificativas := autenticacao.Group("/justificativas")
 			// {
 			// 	tecnico := justificativas.Group("/")
 			// 	tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
@@ -101,7 +101,7 @@ func ConfigurarRotas(r *gin.Engine) {
 			// 	}
 			// }
 
-			// cargos := aut.Group("/cargos")
+			// cargos := autenticacao.Group("/cargos")
 			// {
 			// 	tecnico := cargos.Group("/")
 			// 	tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
@@ -114,18 +114,18 @@ func ConfigurarRotas(r *gin.Engine) {
 			// 	}
 			// }
 
-			// setores := aut.Group("/setores")
-			// {
-			// 	tecnico := setores.Group("/")
-			// 	tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
-			// 	{
-			// 		tecnico.GET("/")
-			// 		tecnico.GET("/:id")
-			// 		tecnico.POST("/")
-			// 		tecnico.PATCH("/:id")
-			// 		tecnico.DELETE("/:id")
-			// 	}
-			// }
+			setores := autenticacao.Group("/setores")
+			{
+				tecnico := setores.Group("/")
+				tecnico.Use(middlewares.RequerCargo("Técnico Administrativo"))
+				{
+					tecnico.GET("/", ctrls.SetorCtrl.Get)
+					// tecnico.GET("/:id")
+					// tecnico.POST("/")
+					// tecnico.PATCH("/:id")
+					// tecnico.DELETE("/:id")
+				}
+			}
 		}
 	}
 }

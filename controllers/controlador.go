@@ -7,23 +7,24 @@ import (
 )
 
 type Controlador struct {
+	SetorCtrl                 SetorControlador
 	AutenticacaoCtrl          AutenticacaoControlador
-	BolsistaCtrl              BolsistaControlador
 	TecnicoAdministrativoCtrl TecnicoAdministrativoControlador
+	BolsistaCtrl              BolsistaControlador
 }
 
 func NovoControlador() *Controlador {
 	// Repositórios.
-	cargoRepo := repositories.NovoCargoRepositorio(database.DB)
 	setorRepo := repositories.NovoSetorRepositorio(database.DB)
+	cargoRepo := repositories.NovoCargoRepositorio(database.DB)
 	mebroRepo := repositories.NovoMembroRepositorio(database.DB)
 	vinculoRepo := repositories.NovoVinculoRepositorio(database.DB)
 	tecnicoAdministrativoRepo := repositories.NovoTecnicoAdministrativoRepositorio(database.DB)
 	bolsistaRepo := repositories.NovoBolsistaRepositorio(database.DB)
 
 	// Serviços.
-	cargoServ := services.NovoCargoServico(cargoRepo)
 	setorServ := services.NovoSetorServico(setorRepo)
+	cargoServ := services.NovoCargoServico(cargoRepo)
 	autenticacaoServ := services.NovoAutenticacaoServico(mebroRepo)
 	membroServ := services.NovoMembroServico(mebroRepo)
 	vinculoServ := services.NovoVinculoServico(vinculoRepo)
@@ -31,16 +32,17 @@ func NovoControlador() *Controlador {
 	bolsistaServ := services.NovoBolsistaServico(bolsistaRepo)
 
 	return &Controlador{
+		SetorCtrl:        NovoSetorControlador(setorServ),
 		AutenticacaoCtrl: NovoAutenticacaoControlador(autenticacaoServ),
-		BolsistaCtrl: NovoBolsistaControlador(
-			bolsistaServ,
+		TecnicoAdministrativoCtrl: NovoTecnicoAdministrativoControlador(
+			tecnicoAdministrativoServ,
 			membroServ,
 			cargoServ,
 			setorServ,
 			vinculoServ,
 		),
-		TecnicoAdministrativoCtrl: NovoTecnicoAdministrativoControlador(
-			tecnicoAdministrativoServ,
+		BolsistaCtrl: NovoBolsistaControlador(
+			bolsistaServ,
 			membroServ,
 			cargoServ,
 			setorServ,
